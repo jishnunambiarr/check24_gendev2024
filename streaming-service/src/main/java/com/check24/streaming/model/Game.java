@@ -1,4 +1,4 @@
-package model;
+package com.check24.streaming.model;
 
 import lombok.Data;
 

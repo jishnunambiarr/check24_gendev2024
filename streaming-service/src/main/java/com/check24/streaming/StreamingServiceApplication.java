@@ -1,3 +1,4 @@
+package com.check24.streaming;
 
 
 import org.springframework.boot.SpringApplication;
