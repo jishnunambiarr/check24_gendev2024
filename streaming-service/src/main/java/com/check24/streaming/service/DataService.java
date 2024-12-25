@@ -25,7 +25,7 @@ public class DataService
     private List<CSVRecord> gameData;
     private List<CSVRecord> streamingOfferData;
     private List<CSVRecord> streamingPackageData;
-    private Map<Integer,Game> gamesByid = new HashMap<>();
+    private Map<Integer,Game> gamesById = new HashMap<>();
     private Map<String, Set<Game>> gamesByTeam = new HashMap<>();
     private Map<Integer, StreamingPackage> packagesById = new HashMap<>();
     private Map<String, Set<Game>> gamesByTournament = new HashMap<>();
@@ -71,7 +71,7 @@ public class DataService
         for(CSVRecord record : gameData)
         {
             Game game = convertToGame(record);
-            gamesByid.putIfAbsent(game.getId(), game);
+            gamesById.putIfAbsent(game.getId(), game);
 
             gamesByTeam.computeIfAbsent(game.getHomeTeam(), k -> new HashSet<>()).add(game);
             gamesByTeam.computeIfAbsent(game.getAwayTeam(), k -> new HashSet<>()).add(game);
@@ -173,5 +173,78 @@ public class DataService
     {
         return packagesById.values();
     }
+
+
+    public double getTeamLiveCoverageByPackageId(String teamName, int packageId)
+    {
+        Set<Game> games = getGamesByTeam(teamName);
+        if(games.isEmpty()) return 0.0;
+        int liveGamesCovered = 0;
+        for(Game game : games)
+        {
+            for(StreamingOffer offer : getOffersForGame(game.getId()))
+            {
+                if(offer.getStreamingPackageId() == packageId && offer.isHasLive())
+                {
+                    liveGamesCovered++;
+                    break;
+                } 
+            }
+        }
+        return (double) liveGamesCovered / games.size();
+    }
+
+    public double getTeamHighlightsCoverageByPackageId(String teamName, int packageId)
+    {
+        Set<Game> games = getGamesByTeam(teamName);
+        if(games.isEmpty()) return 0.0;
+        int highlightGamesCovered = 0;
+        for(Game game : games)
+        {
+            for(StreamingOffer offer : getOffersForGame(game.getId()))
+            {
+                if(offer.getStreamingPackageId() == packageId && offer.isHasHighlights())
+                {
+                    highlightGamesCovered++;
+                    break;
+                } 
+            }
+        }
+        return (double) highlightGamesCovered / games.size();
+
+    }
+
+    public double getTournamentLiveCoverageByPackageId(String tournamentName, int packageId) {
+        Set<Game> games = getGamesByTournament(tournamentName);
+        if (games.isEmpty()) return 0.0;
+    
+        int liveGamesCovered = 0;
+        for(Game game : games) {
+            for(StreamingOffer offer : getOffersForGame(game.getId())) {
+                if(offer.getStreamingPackageId() == packageId && offer.isHasLive()) {
+                    liveGamesCovered++;
+                    break;
+                }
+            }
+        }
+        return (double) liveGamesCovered / games.size();
+    }
+    
+    public double getTournamentHighlightsCoverageByPackageId(String tournamentName, int packageId) {
+        Set<Game> games = getGamesByTournament(tournamentName);
+        if (games.isEmpty()) return 0.0;
+    
+        int highlightGamesCovered = 0;
+        for(Game game : games) {
+            for(StreamingOffer offer : getOffersForGame(game.getId())) {
+                if(offer.getStreamingPackageId() == packageId && offer.isHasHighlights()) {
+                    highlightGamesCovered++;
+                    break;
+                }
+            }
+        }
+        return (double) highlightGamesCovered / games.size();
+    }
+
 
 }

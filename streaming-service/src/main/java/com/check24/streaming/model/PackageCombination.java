@@ -9,9 +9,8 @@ import lombok.AllArgsConstructor;
 public class PackageCombination 
 {
     private final List<StreamingPackage> packages;
-    private final int coveredGames;
-    private final int totalGames;
-    private final double coverage;
+    private final double totalLiveCoverage;
+    private final double totalHighlightCoverage;
     private final double totalPrice;
 
 }

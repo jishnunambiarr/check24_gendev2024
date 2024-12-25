@@ -12,13 +12,13 @@ public class StreamingPackage
     private final double monthlyPriceCents;
     private final double yearlyPriceCents;
 
-    private double getMonthlyPrice()
+    public double getMonthlyPrice()
     {
-        return monthlyPriceCents / 100;
+        return (double) monthlyPriceCents / 100;
     }
 
-    private double getYearlyPrice()
+    public double getYearlyPrice()
     {
-        return yearlyPriceCents / 100;
+        return (double) yearlyPriceCents / 100;
     }
 }
