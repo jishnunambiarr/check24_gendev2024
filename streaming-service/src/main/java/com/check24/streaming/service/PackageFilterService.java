@@ -3,9 +3,12 @@ package com.check24.streaming.service;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
 import com.check24.streaming.model.FilterOptions;
 import com.check24.streaming.model.StreamingPackage;
 
+@Service
 public class PackageFilterService 
 {
 

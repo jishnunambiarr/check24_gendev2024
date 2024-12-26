@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Package Finder</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .selection-area {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        .select-container {
+            margin-bottom: 20px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Find Your Perfect Sports Package</h1>
+        <p>Select your favorite teams and tournaments to explore streaming packages tailored for you.</p>
+        
+        <div class="selection-area">
+            <div class="select-container">
+                <label for="teamSelect">Select Your Favorite Teams:</label>
+                <select id="teamSelect" multiple class="select2">
+                    <!-- Teams will be dynamically populated -->
+                </select>
+            </div>
+
+            <div class="select-container">
+                <label for="tournamentSelect">Select Tournaments:</label>
+                <select id="tournamentSelect" multiple class="select2">
+                    <!-- Tournaments will be dynamically populated -->
+                </select>
+            </div>
+
+            <button onclick="findPackages()">Find Available Packages</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="/js/index.js"></script>
+</body>
+</html>
