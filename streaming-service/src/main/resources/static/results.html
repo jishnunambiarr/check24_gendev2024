@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Packages</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .container {
             max-width: 1200px;
@@ -54,7 +55,7 @@
     <div class="container">
         <h1>Available Streaming Packages</h1>
         
-        <div class="filter-section">
+        <div class="filter-section" style="display: none;">
             <h3>Filter Options</h3>
             
             <div class="preference-options">
@@ -67,22 +68,25 @@
                         <label for="highlights">Highlights</label>
                     </div>
                 </div>
-
+        
                 <div>
                     <label for="maxPrice">Maximum Price (€):</label>
                     <input type="number" id="maxPrice" min="0" step="0.01">
                 </div>
-
+        
                 <div>
                     <label>Sort By:</label>
                     <select id="sortBy">
+                        <option value="">No sorting</option>
                         <option value="PRICE">Price</option>
                         <option value="COVERAGE">Coverage</option>
                     </select>
                 </div>
             </div>
-            
-            <button onclick="applyFilters()">Apply Filters</button>
+            <div class="filter-controls" style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                <button onclick="applyFilters()" class="apply-filters-btn">Apply Filters</button>
+                <button onclick="clearFilters()" class="clear-filters-btn" style="background-color: #6c757d;">Clear Filters</button>
+            </div>
         </div>
 
         <div id="packageResults" class="package-grid">
@@ -91,19 +95,12 @@
 
         <div class="action-buttons">
             <button onclick="findBestCombination()">Find Best Combination</button>
-            <button onclick="compareSelected()" id="compareButton" disabled>Compare Selected Packages</button>
         </div>
 
         <!-- Best Combination Results -->
         <div id="bestCombination" class="comparison-section">
             <h2>Best Package Combination</h2>
             <!-- Best combination results here -->
-        </div>
-
-        <!-- Package Comparison Results -->
-        <div id="packageComparison" class="comparison-section">
-            <h2>Package Comparison</h2>
-            <!-- Comparison results here -->
         </div>
     </div>
 

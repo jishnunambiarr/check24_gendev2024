@@ -1,8 +1,15 @@
 version: '3.8'
 services:
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:
-      - ./src/main/resources:/app/src/main/resources
+      - ./src:/app/src  
+      - ./pom.xml:/app/pom.xml  
+      - ~/.m2:/root/.m2  
+      - ./static:/app/static
+    environment:
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true

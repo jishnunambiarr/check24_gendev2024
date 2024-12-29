@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Combination Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .period {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .package-item {
+            border-left: 4px solid #4CAF50;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #fff;
+        }
+        .coverage-bar {
+            background-color: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+        .coverage-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .live-coverage {
+            background-color: #4CAF50;
+        }
+        .highlights-coverage {
+            background-color: #2196F3;
+        }
+        .coverage-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .price-info {
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Package Combination Summary</h2>
+            <div id="combinationType"></div>
+            <div id="totalCost"></div>
+            <div id="coverage"></div>
+        </div>
+
+        <div class="card" id="periodsContainer">
+            <h2>Package Periods</h2>
+            <!-- Periods will be inserted here -->
+        </div>
+
+        <div class="card">
+            <h2>Coverage Details</h2>
+            <div class="summary-grid">
+                <div id="coveredGames">
+                    <h3>Covered Games</h3>
+                    <!-- Covered games will be inserted here -->
+                </div>
+                <div id="uncoveredGames">
+                    <h3>Uncovered Games</h3>
+                    <!-- Uncovered games will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function displayCombination(combination) {
+            // Display summary
+            document.getElementById('combinationType').innerHTML = `Type: ${combination.type}`;
+            document.getElementById('totalCost').innerHTML = `Total Cost: €${combination.totalCost.toFixed(2)}`;
+            document.getElementById('coverage').innerHTML = `Overall Coverage: ${(combination.coveragePercentage * 100).toFixed(1)}%`;
+
+            // Display periods
+            const periodsContainer = document.getElementById('periodsContainer');
+            combination.packages.forEach(period => {
+                const periodDiv = document.createElement('div');
+                periodDiv.className = 'period';
+                
+                periodDiv.innerHTML = `
+                    <h3>Period: ${period.startMonthYear} ${period.startMonthYear !== period.endMonthYear ? '- ' + period.endMonthYear : ''}</h3>
+                    <div class="price-info">Period Cost: €${period.periodCost.toFixed(2)}</div>
+                    ${period.packages.map(pkg => `
+                        <div class="package-item">
+                            <h4>${pkg.name}</h4>
+                            <div>Monthly Price: €${pkg.monthlyPrice.toFixed(2)}</div>
+                            
+                            <div class="coverage-info">
+                                <span>Live Coverage</span>
+                                <span>${pkg.liveCoverage ? (pkg.liveCoverage * 100).toFixed(1) : 0}%</span>
+                            </div>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill live-coverage" 
+                                     style="width: ${pkg.liveCoverage ? pkg.liveCoverage * 100 : 0}%"></div>
+                            </div>
+
+                            <div class="coverage-info">
+                                <span>Highlights Coverage</span>
+                                <span>${pkg.highlightsCoverage ? (pkg.highlightsCoverage * 100).toFixed(1) : 0}%</span>
+                            </div>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill highlights-coverage" 
+                                     style="width: ${pkg.highlightsCoverage ? pkg.highlightsCoverage * 100 : 0}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                
+                periodsContainer.appendChild(periodDiv);
+            });
+
+            // Display coverage details
+            const coveredGamesDiv = document.getElementById('coveredGames');
+            const uncoveredGamesDiv = document.getElementById('uncoveredGames');
+
+            Object.entries(combination.coveredGames).forEach(([key, games]) => {
+                coveredGamesDiv.innerHTML += `
+                    <div>
+                        <strong>${key}</strong>: ${games.length} games
+                    </div>
+                `;
+            });
+
+            Object.entries(combination.uncoveredGames).forEach(([key, games]) => {
+                uncoveredGamesDiv.innerHTML += `
+                    <div>
+                        <strong>${key}</strong>: ${games.length} games
+                    </div>
+                `;
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            displayCombination(sampleCombination);
+        });
+    </script>
+</body>
+</html>

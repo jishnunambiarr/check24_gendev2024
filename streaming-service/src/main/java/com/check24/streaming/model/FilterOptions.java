@@ -2,5 +2,7 @@ package com.check24.streaming.model;
 
 import java.util.List;
 
-public record FilterOptions(List<String> teams, List<String> tournaments, SortingOptions sortingOption, CoveragePreference preference, Double maxPrice) {}
+import io.micrometer.common.lang.Nullable;
+
+public record FilterOptions(@Nullable SortingOptions sortingOption,@Nullable CoveragePreference preference,@Nullable Double maxPrice) {}
 

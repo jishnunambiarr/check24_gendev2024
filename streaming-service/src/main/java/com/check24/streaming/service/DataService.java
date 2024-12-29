@@ -5,10 +5,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,7 +51,7 @@ public class DataService
     private List<CSVRecord> loadData(String fileName)
     {
         try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-            Reader reader = new InputStreamReader(inputStream))
+            Reader reader = new InputStreamReader(inputStream, "UTF-8"))
             {
                 CSVFormat csvFormat = CSVFormat.Builder.create()
                     .setHeader()
@@ -66,6 +68,7 @@ public class DataService
             
     }
 
+
     private List<CSVRecord> loadGameData() 
     {
         gameData = loadData("bc_game.csv");
@@ -74,10 +77,8 @@ public class DataService
         {
             Game game = convertToGame(record);
             gamesById.putIfAbsent(game.getId(), game);
-
             gamesByTeam.computeIfAbsent(game.getHomeTeam(), k -> new HashSet<>()).add(game);
-            gamesByTeam.computeIfAbsent(game.getAwayTeam(), k -> new HashSet<>()).add(game);
-            
+            gamesByTeam.computeIfAbsent(game.getAwayTeam(), k -> new HashSet<>()).add(game);   
             gamesByTournament.computeIfAbsent(game.getTournament(), k -> new HashSet<>()).add(game);
         }
         return gameData;
@@ -120,8 +121,8 @@ public class DataService
         return new StreamingOffer(
             Integer.parseInt(record.get("game_id")),
             Integer.parseInt(record.get("streaming_package_id")),
-            Boolean.parseBoolean(record.get("live")),
-            Boolean.parseBoolean(record.get("highlights"))
+            record.get("live").equals("1"),
+            record.get("highlights").equals("1")
             
         );
     }
@@ -194,6 +195,15 @@ public class DataService
         return packagesById.values();
     }
 
+    public String getGameMonth(int gameId)
+    {
+        return gamesById.get(gameId).getStartTime().split(" ")[0].split("-")[1];
+    }
+
+    public String getGameYear(int gameId)
+    {
+        return gamesById.get(gameId).getStartTime().split(" ")[0].split("-")[0];
+    }
 
     public double getTeamLiveCoverageByPackageId(String teamName, int packageId)
     {
@@ -267,4 +277,6 @@ public class DataService
     }
 
 
+
 }
+
