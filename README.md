@@ -41,8 +41,10 @@ The combination logic employs two approaches:
 
 ## Getting Started
 
-# Project Structure
+## Project Structure
 The project expects the following structure:
+
+```
 project-root/
 ├── src/
 ├── static/
