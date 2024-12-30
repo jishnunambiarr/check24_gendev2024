@@ -5,12 +5,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,12 +24,17 @@ import com.check24.streaming.model.StreamingPackage;
 @Service
 public class DataService 
 {
+    
     private List<CSVRecord> gameData;
     private List<CSVRecord> streamingOfferData;
     private List<CSVRecord> streamingPackageData;
-    private Map<Integer,Game> gamesById = new HashMap<>();
+    @SuppressWarnings("FieldMayBeFinal")
+    private Map<Integer,Game> gamesById = new HashMap<>();  
+    @SuppressWarnings("FieldMayBeFinal")
     private Map<String, Set<Game>> gamesByTeam = new HashMap<>();
+    @SuppressWarnings("FieldMayBeFinal")
     private Map<Integer, StreamingPackage> packagesById = new HashMap<>();
+    @SuppressWarnings("FieldMayBeFinal")
     private Map<String, Set<Game>> gamesByTournament = new HashMap<>();
     private final Map<Integer, List<StreamingOffer>> offersByGameId = new HashMap<>();
 

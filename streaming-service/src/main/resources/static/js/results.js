@@ -18,28 +18,51 @@ $(document).ready(function() {
     setupFilterListeners();
 });
 
+let filterState = {
+    sortingOption: null,
+    preference: null,
+    maxPrice: null
+};
+
+function updateFilterState(event) {
+    const field = event.target.id;
+    switch(field) {
+        case 'coverage':
+            filterState.preference = event.target.value || null;
+            break;
+        case 'sortBy':
+            filterState.sortingOption = event.target.value || null;
+            break;
+        case 'maxPrice':
+            filterState.maxPrice = event.target.value ? 
+                parseFloat(event.target.value) : null;
+            break;
+    }
+}
+
 function setupFilterListeners() {
-    document.getElementById('maxPrice')?.addEventListener('change', applyFilters);
-    document.getElementById('coveragePreference')?.addEventListener('change', applyFilters);
-    document.getElementById('sortOption')?.addEventListener('change', applyFilters);
-}
+    document.getElementById('maxPrice')?.addEventListener('input', updateFilterState);
+    document.getElementById('coverage')?.addEventListener('change', updateFilterState);
+    document.getElementById('sortBy')?.addEventListener('change', updateFilterState);
 
-function applyFilters() {
-    const maxPrice = document.getElementById('maxPrice')?.value;
-    const preference = document.getElementById('coveragePreference')?.value;
-    const sortOption = document.getElementById('sortOption')?.value;
-
-    const filterOptions = {
-        maxPrice: maxPrice ? parseFloat(maxPrice) : null,
-        preference: preference || null,
-        sortingOption: sortOption || null
-    };
-
-    const packages = JSON.parse(sessionStorage.getItem('packages') || '[]');
+        // Add form submit handler
+        const filterForm = document.querySelector('.filter-section form');
+        filterForm?.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent form submission
+        });
     
-    displayPackages(packages, filterOptions);
-}
+        // Add button click handlers
+        document.querySelector('.apply-filters-btn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            applyFilters();
+        });
+    
+        document.querySelector('.clear-filters-btn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearFilters();
+        });
 
+}
 
 function searchPackages(teams, tournaments) {
     console.log('Searching packages for teams:', teams, 'tournaments:', tournaments);
@@ -78,17 +101,20 @@ function searchPackages(teams, tournaments) {
 }
 
 function applyFilters() {
-    const filterOptions = {
-        preference: document.querySelector('input[name="preference"]:checked')?.value || null,
-        sortingOption: document.getElementById('sortBy').value || null,
-        maxPrice: document.getElementById('maxPrice').value ? 
-                 parseFloat(document.getElementById('maxPrice').value) : null
-    };
+    if (!packages || packages.length === 0) {
+        console.error('No packages available to filter');
+        return;
+    }
 
+  
     // Send both the current packages and filter options
     const requestBody = {
-        packages: packages,  // This is our global packages array that was populated during initial search
-        filterOptions: filterOptions
+        packages: packages,  
+        filterOptions: {
+            sortingOption: filterState.sortingOption,
+            preference: filterState.preference,
+            maxPrice: filterState.maxPrice
+        }
     };
 
     fetch('/api/filter', {
@@ -114,12 +140,16 @@ function applyFilters() {
 }
 
 function clearFilters() {
-    document.querySelectorAll('input[name="preference"]').forEach(radio => {
-        radio.checked = false;
-    });
+    document.getElementById('coverage').value = '';
     document.getElementById('maxPrice').value = '';
     document.getElementById('sortBy').value = '';
     
+    filterState = {
+        sortingOption: null,
+        preference: null,      
+        maxPrice: null
+    };
+
     // Display the original packages
     displayPackages(packages);
 }
@@ -142,9 +172,6 @@ function displayPackages(receivedPackages) {
             <p>Monthly Price: €${(monthlyPrice)}</p>
             <p>Live Coverage: ${(pkg.liveCoveragePercentage * 100).toFixed(1)}%</p>
             <p>Highlights Coverage: ${(pkg.highlightsCoveragePercentage * 100).toFixed(1)}%</p>
-            <input type="checkbox" onchange="togglePackageSelection(${pkg.streamingPackageId})" 
-                   ${selectedPackages.has(pkg.streamingPackageId) ? 'checked' : ''}>
-            <label>Select for comparison</label>
         `;
         packageResults.appendChild(card);
     });
@@ -153,6 +180,24 @@ function displayPackages(receivedPackages) {
 function findBestCombination() {
     const selectedTeams = JSON.parse(sessionStorage.getItem('selectedTeams') || '[]');
     const selectedTournaments = JSON.parse(sessionStorage.getItem('selectedTournaments') || '[]');
+    const packageDTOs = packages.map(pkg => ({
+        streamingPackageId: pkg.streamingPackageId,
+        name: pkg.name,
+        monthlyPriceCents: pkg.monthlyPriceCents,
+        liveCoveragePercentage: pkg.liveCoveragePercentage,
+        highlightsCoveragePercentage: pkg.highlightsCoveragePercentage
+    }));
+
+
+    console.log('Original packages:', packages); // Log original packages
+
+    // Check if packages exists and has data
+    if (!packages || packages.length === 0) {
+        console.error('No packages available');
+        alert('No packages available for comparison');
+        return;
+    }
+    console.log('Package DTOs:', packageDTOs);
 
     fetch('api/best-combination', {
         method: 'POST',
@@ -162,7 +207,7 @@ function findBestCombination() {
         body: JSON.stringify({
             teams: selectedTeams,
             tournaments : selectedTournaments,
-            packages: packages
+            packages: packageDTOs
         })
     })
     .then(response => {

@@ -1,26 +1,20 @@
 package com.check24.streaming.service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import org.springframework.stereotype.Service;
 
 import com.check24.streaming.model.BestCombination;
-import com.check24.streaming.model.FilterOptions;
 import com.check24.streaming.model.Game;
-import com.check24.streaming.model.PackageCombination;
 import com.check24.streaming.model.StreamingOffer;
 import com.check24.streaming.model.StreamingPackageDTO;
 import com.check24.streaming.model.BestCombination.PackagePeriod;
-import com.check24.streaming.model.StreamingPackage;
 
 @Service
 public class PackageCombinationService {
-    private final PackageFilterService packageFilterService;
     private final DataService dataService;
 
-    public PackageCombinationService(PackageFilterService packageFilterService, DataService dataService) {
-        this.packageFilterService = packageFilterService;
+    public PackageCombinationService(DataService dataService) {
         this.dataService = dataService;
     }
 
@@ -46,6 +40,10 @@ public class PackageCombinationService {
     
     private double caclulateAdditionalCoverage(int selectedPackageId, Set<Game> uncoveredGames)
     {
+        if (uncoveredGames.isEmpty()) {
+            return 0.0;
+        }
+
         int additionalGames = 0;
         for(Game game : uncoveredGames)
         {
@@ -63,15 +61,27 @@ public class PackageCombinationService {
 
     private boolean gameDensity(Map<String, Set<Game>> gamesByMonth) {
         int noOfMonths = gamesByMonth.size();
-        int noOfGames = gamesByMonth.values().size();
+        int noOfGames = gamesByMonth.values().stream()
+        .mapToInt(Set::size)
+        .sum();
+
         double averageGamesPerMonth = (double) noOfGames / noOfMonths;
 
         //variance of games per month
         double variance = gamesByMonth.values().stream()
-                .map(game -> Math.pow(gamesByMonth.values().size() - averageGamesPerMonth, 2))
-                .reduce(0.0, Double::sum) / noOfMonths;
+                .mapToDouble(game -> Math.pow(gamesByMonth.values().size() - averageGamesPerMonth, 2))
+                .sum() / noOfMonths;
 
         return variance > 5.0 && averageGamesPerMonth < 3.0; //if variance is high and average games per month is low
+    }
+
+    private double calculateEfficiency(StreamingPackageDTO pkg, double additionalCoverage) {
+        double coverageBoost = pkg.getLiveCoveragePercentage() > 0 ? 0.5 : 0.0;
+        if (pkg.getMonthlyPrice() == 0) {
+            // For free packages, return coverage directly
+            return additionalCoverage * 100 * coverageBoost; // Multiply by 100 to give free packages with good coverage priority
+        }
+        return additionalCoverage / pkg.getMonthlyPrice() * coverageBoost;
     }
     
     
@@ -86,6 +96,7 @@ public class PackageCombinationService {
 
     }
 
+    @SuppressWarnings("unused")
     public BestCombination greedyPackageCombination(List<String> teams, List<String> tournaments, Collection<StreamingPackageDTO> packages)
     {
         Set<Game> games = setOfAllGames(teams, tournaments);
@@ -100,9 +111,11 @@ public class PackageCombinationService {
                 
                 if (!selectedPackages.contains(pkg)) {
                     double additionalCoverage = caclulateAdditionalCoverage(pkg.getStreamingPackageId(), uncoveredGames);
-                    double efficiency = additionalCoverage / pkg.getMonthlyPrice();
-                    if(efficiency > 5.0)
-                    packageEfficiencies.put(pkg, efficiency);
+                    if(additionalCoverage > 0) 
+                    {
+                        double efficiency = calculateEfficiency(pkg, additionalCoverage);
+                        packageEfficiencies.put(pkg, efficiency);
+                    }
                 }
             }
 
@@ -180,7 +193,9 @@ public class PackageCombinationService {
             }
         }
 
-        return new BestCombination(currentPrice, selectedPackages, coveredGamesOverall, uncoveredGamesOverall, currentCoverage, null, null);
+        double coveragePercentage = (double) coveredGames.size() / games.size();
+
+        return new BestCombination(currentPrice, selectedPackages, coveredGamesOverall, uncoveredGamesOverall, coveragePercentage);
     
         
     }
@@ -293,9 +308,11 @@ public class PackageCombinationService {
                 
                 if (!selectedPackages.contains(pkg)) {
                     double additionalCoverage = caclulateAdditionalCoverage(pkg.getStreamingPackageId(), uncoveredGames);
-                    double efficiency = additionalCoverage / pkg.getMonthlyPrice();
-                    if(efficiency > 5.0)
-                    packageEfficiencies.put(pkg, efficiency);
+                    if(additionalCoverage > 0) 
+                    {
+                        double efficiency = calculateEfficiency(pkg, additionalCoverage);
+                        packageEfficiencies.put(pkg, efficiency);
+                    }
                 }
             }
 

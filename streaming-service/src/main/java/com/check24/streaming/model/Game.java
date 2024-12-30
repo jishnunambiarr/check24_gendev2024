@@ -21,5 +21,12 @@ public class Game {
         return Set.of(homeTeam, awayTeam);
 
     }
+
+    public String formatGameInfo() {
+        return String.format("%s vs %s - %s", 
+            this.getHomeTeam(), 
+            this.getAwayTeam(),
+            this.getStartTime());
+    }
 }
 

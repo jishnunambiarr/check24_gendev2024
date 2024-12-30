@@ -1,12 +1,9 @@
 package com.check24.streaming.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.swing.SwingConstants;
 
 import org.springframework.stereotype.Service;
 

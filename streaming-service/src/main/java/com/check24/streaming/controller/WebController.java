@@ -4,9 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import com.check24.streaming.model.FilterOptions;
-import com.check24.streaming.model.PackageCombination;
 import com.check24.streaming.model.SearchRequest;
-import com.check24.streaming.model.StreamingPackage;
 import com.check24.streaming.service.DataService;
 import com.check24.streaming.service.PackageCombinationService;
 import com.check24.streaming.service.PackageFilterService;
@@ -14,14 +12,12 @@ import com.check24.streaming.service.PackageFilterService;
 import java.util.Collection;
 import java.util.List;
 
-import javax.naming.directory.SearchResult;
-
 import com.check24.streaming.model.BestCombination;
 import com.check24.streaming.model.StreamingPackageDTO;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*") // For development. Adjust for production
+@CrossOrigin(origins = "*")
 public class WebController {
     private final DataService dataService;
     private final PackageFilterService packageFilterService;
@@ -45,7 +41,7 @@ public class WebController {
         return ResponseEntity.ok(dataService.getAllTournaments());
     }
 
-    record FilterRequest(
+    public record FilterRequest(
     Collection<StreamingPackageDTO> packages,
     FilterOptions filterOptions
     ) {}
@@ -58,10 +54,7 @@ public class WebController {
 
     
     @PostMapping("/search")
-    public ResponseEntity<Collection<StreamingPackageDTO>> searchPackages(@RequestBody SearchRequest request)
-    {
-        System.out.println("Search request received - Teams: " + request.teams());
-        System.out.println("Search request received - Tournaments: " + request.tournaments());
+    public ResponseEntity<Collection<StreamingPackageDTO>> searchPackages(@RequestBody SearchRequest request) {
         return ResponseEntity.ok(
             packageFilterService.searchByTeamsAndTournaments(
                 request.teams(), 
@@ -70,7 +63,7 @@ public class WebController {
         );
     }
 
-    // Create a request record for the compare endpoint
+    
     public record CompareRequest(
         List<String> teams,
         List<String> tournaments,
@@ -78,7 +71,7 @@ public class WebController {
     ) {}
 
     @PostMapping("/best-combination")
-    public ResponseEntity<BestCombination> comparePackages(
+    public @ResponseBody ResponseEntity<BestCombination> comparePackages(
         @RequestBody CompareRequest request) {
         return ResponseEntity.ok(
             packageCombinationService.getBestPackageCombinations(
@@ -89,7 +82,7 @@ public class WebController {
         );
     }
 
-    // Add error handling
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity

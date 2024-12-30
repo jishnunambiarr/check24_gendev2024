@@ -5,72 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Package Combination Results</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .period {
-            background-color: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-        .package-item {
-            border-left: 4px solid #4CAF50;
-            padding: 10px;
-            margin: 10px 0;
-            background-color: #fff;
-        }
-        .coverage-bar {
-            background-color: #e9ecef;
-            height: 20px;
-            border-radius: 10px;
-            margin: 5px 0;
-            overflow: hidden;
-        }
-        .coverage-fill {
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-        .live-coverage {
-            background-color: #4CAF50;
-        }
-        .highlights-coverage {
-            background-color: #2196F3;
-        }
-        .coverage-info {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-        }
-        .price-info {
-            font-weight: bold;
-            color: #2196F3;
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+:root {
+        --check24-blue: #005EA8;
+        --check24-yellow: #FFBB1C;
+        --check24-light-blue: #E6F0F7;
+        --check24-gray: #666666;
+        --check24-light-gray: #F5F5F5;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--check24-light-gray);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 4px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #E0E0E0;
+    }
+
+    .card h2 {
+        color: var(--check24-blue);
+        font-size: 1.5rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .summary-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+        padding: 16px;
+        background-color: var(--check24-light-blue);
+        border-radius: 4px;
+    }
+
+    .summary-info div {
+        font-size: 1.1rem;
+    }
+
+    .period {
+        background-color: white;
+        padding: 20px;
+        margin: 16px 0;
+        border-radius: 4px;
+        border: 1px solid #E0E0E0;
+    }
+
+    .package-item {
+        border-left: 4px solid var(--check24-blue);
+        padding: 16px;
+        margin: 12px 0;
+        background-color: white;
+        transition: transform 0.2s ease;
+    }
+
+    .package-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .package-item h4 {
+        color: var(--check24-blue);
+        margin: 0 0 12px 0;
+        font-size: 1.2rem;
+    }
+
+    .price-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .price-info {
+        color: var(--check24-blue);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .coverage-bar {
+        background-color: var(--check24-light-blue);
+        height: 12px;
+        border-radius: 6px;
+        margin: 8px 0;
+        overflow: hidden;
+    }
+
+    .coverage-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .live-coverage {
+        background-color: var(--check24-blue);
+    }
+
+    .highlights-coverage {
+        background-color: var(--check24-yellow);
+    }
+
+    .coverage-info {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+        color: var(--check24-gray);
+    }
+
+    .coverage-item {
+        margin-bottom: 16px;
+        padding: 16px;
+        background-color: white;
+        border-radius: 4px;
+        border: 1px solid #E0E0E0;
+    }
+
+    .coverage-item strong {
+        color: var(--check24-blue);
+        font-size: 1.1rem;
+    }
+
+    .coverage-item ul {
+        margin-top: 8px;
+        padding-left: 20px;
+        list-style-type: none;
+    }
+
+    .coverage-item li {
+        font-size: 0.9rem;
+        color: var(--check24-gray);
+        padding: 4px 0;
+        border-bottom: 1px solid #E0E0E0;
+    }
+
+    .coverage-item li:last-child {
+        border-bottom: none;
+    }
+    .toggle-icon {
+    font-size: 1.2rem;
+    color: var(--check24-blue);
+    transition: transform 0.3s ease;
+    }
+
+    .coverage-header.active .toggle-icon {
+        transform: rotate(45deg);
+    }
+    .games-container {
+    display: none;  /* Hide by default */
+    margin-top: 12px;
+    }
+
+    .games-container.show {
+        display: block;  /* Show when the 'show' class is added */
+    }
+
+    .coverage-header {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+    }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h2>Package Combination Summary</h2>
+            <h2>Here is the best combination for your favorite teams and tournaments!</h2>
             <div id="combinationType"></div>
             <div id="totalCost"></div>
             <div id="coverage"></div>
@@ -97,73 +209,221 @@
     </div>
 
     <script>
+        function safeParse(games) {
+            try {
+                return Array.from(games);
+            } catch (e) {
+                console.error('Error parsing games:', e);
+                return [];
+            }
+        }
+
+        function formatDateTime(startTime) {
+            const [date, time] = startTime.split(' ');
+            const [hour, minute] = time.split(':');
+
+            return `${date.split('-').reverse().join('/')} ${hour}:${minute}`;
+        }
+
+        function groupGamesByMonth(games) {
+            return safeParse(games).reduce((acc, game) => {
+                const [date] = game.startTime.split(' ');
+                const [year, month] = date.split('-');
+                const monthName = new Date(`${year}-${month}-01`).toLocaleString('default', { month: 'long' });
+                const monthYear = `${monthName} ${year}`;
+
+                if(!acc[monthYear]) {
+                    acc[monthYear] = [];
+                }
+                acc[monthYear].push(game);
+                return acc;
+            }, {});
+        }
+
+        function toggleGames(element) {
+            element.classList.toggle('active');
+            const container = element.nextElementSibling;
+            container.classList.toggle('show');
+        }
+
         function displayCombination(combination) {
             // Display summary
-            document.getElementById('combinationType').innerHTML = `Type: ${combination.type}`;
-            document.getElementById('totalCost').innerHTML = `Total Cost: €${combination.totalCost.toFixed(2)}`;
-            document.getElementById('coverage').innerHTML = `Overall Coverage: ${(combination.coveragePercentage * 100).toFixed(1)}%`;
+            document.getElementById('combinationType').innerHTML = `
+                <div class="summary-info">
+                    <div>
+                        <strong>Total Cost:</strong> €${combination.totalCost.toFixed(2)}
+                    </div>
+                    <div>
+                        <strong>Overall Coverage:</strong> ${(combination.coveragePercentage * 100).toFixed(1)}%
+                    </div>
+                </div>
+            `;
+
 
             // Display periods
             const periodsContainer = document.getElementById('periodsContainer');
-            combination.packages.forEach(period => {
+
+            if(combination.type == 'SEQUENTIAL') {
+                periodsContainer.style.display = 'block';
+                periodsContainer.innerHTML = '<h2> Package Periods </h2>';
+
+                combination.packages.forEach(period => {
                 const periodDiv = document.createElement('div');
                 periodDiv.className = 'period';
                 
                 periodDiv.innerHTML = `
                     <h3>Period: ${period.startMonthYear} ${period.startMonthYear !== period.endMonthYear ? '- ' + period.endMonthYear : ''}</h3>
                     <div class="price-info">Period Cost: €${period.periodCost.toFixed(2)}</div>
-                    ${period.packages.map(pkg => `
-                        <div class="package-item">
-                            <h4>${pkg.name}</h4>
+                        ${period.packages.map(pkg => `
+                    <div class="package-item">
+                        <h4>${pkg.name}</h4>
+                        <div class="price-section">
                             <div>Monthly Price: €${pkg.monthlyPrice.toFixed(2)}</div>
-                            
+                            <div>Yearly Price: €${pkg.yearlyPrice.toFixed(2)}</div>
+                        </div>
+                        <div class="coverage-section">
                             <div class="coverage-info">
                                 <span>Live Coverage</span>
-                                <span>${pkg.liveCoverage ? (pkg.liveCoverage * 100).toFixed(1) : 0}%</span>
+                                <span>${(pkg.liveCoveragePercentage * 100).toFixed(1)}%</span>
                             </div>
                             <div class="coverage-bar">
                                 <div class="coverage-fill live-coverage" 
-                                     style="width: ${pkg.liveCoverage ? pkg.liveCoverage * 100 : 0}%"></div>
+                                    style="width: ${pkg.liveCoveragePercentage * 100}%"></div>
                             </div>
-
+                        </div>
+                        <div class="coverage-section">
                             <div class="coverage-info">
                                 <span>Highlights Coverage</span>
-                                <span>${pkg.highlightsCoverage ? (pkg.highlightsCoverage * 100).toFixed(1) : 0}%</span>
+                                <span>${(pkg.highlightsCoveragePercentage * 100).toFixed(1)}%</span>
                             </div>
                             <div class="coverage-bar">
                                 <div class="coverage-fill highlights-coverage" 
-                                     style="width: ${pkg.highlightsCoverage ? pkg.highlightsCoverage * 100 : 0}%"></div>
+                                    style="width: ${pkg.highlightsCoveragePercentage * 100}%"></div>
                             </div>
                         </div>
+                    </div>                   
                     `).join('')}
                 `;
-                
+               
                 periodsContainer.appendChild(periodDiv);
             });
+
+            }
+            else {
+                periodsContainer.style.display = 'block';
+                periodsContainer.innerHTML = '<h2> Recommended Package Combination </h2>';
+                combination.packages.forEach(period => {
+                    const periodDiv = document.createElement('div');
+                    periodDiv.className = 'period';
+                    periodDiv.innerHTML = `
+                    ${period.packages.map(pkg => `
+                <div class="package-item">
+                    <h4>${pkg.name}</h4>
+                    <div class="price-section">
+                        <div>Monthly Price: €${pkg.monthlyPrice.toFixed(2)}</div>
+                        <div>Yearly Price: €${pkg.yearlyPrice.toFixed(2)}</div>
+                    </div>
+                    <div class="coverage-section">
+                        <div class="coverage-info">
+                            <span>Live Coverage</span>
+                            <span>${(pkg.liveCoveragePercentage * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="coverage-bar">
+                            <div class="coverage-fill live-coverage" 
+                                style="width: ${pkg.liveCoveragePercentage * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="coverage-section">
+                        <div class="coverage-info">
+                            <span>Highlights Coverage</span>
+                            <span>${(pkg.highlightsCoveragePercentage * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="coverage-bar">
+                            <div class="coverage-fill highlights-coverage" 
+                                style="width: ${pkg.highlightsCoveragePercentage * 100}%"></div>
+                        </div>
+                    </div>
+                </div>
+                    `).join('')}
+                `;
+
+                periodsContainer.appendChild(periodDiv);
+                });
+                
+            }
+            
 
             // Display coverage details
             const coveredGamesDiv = document.getElementById('coveredGames');
             const uncoveredGamesDiv = document.getElementById('uncoveredGames');
 
             Object.entries(combination.coveredGames).forEach(([key, games]) => {
+                const cleanKey = key.replace(/[<>]/g, '');
+                const groupedGames = groupGamesByMonth(games);
+
                 coveredGamesDiv.innerHTML += `
-                    <div>
-                        <strong>${key}</strong>: ${games.length} games
+                    <div class="coverage-item">
+                        <div class="coverage-header" onclick="toggleGames(this)">
+                            <strong>${cleanKey}</strong>: ${games.length} games
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="games-container">
+                            ${Object.entries(groupedGames).map(([month, monthGames]) => `
+                                <div class="month-group">
+                                    <div class="month-header">${month}</div>
+                                    <ul>
+                                        ${monthGames.map(game => `
+                                            <li>${game.homeTeam} vs ${game.awayTeam} 
+                                                <span class="game-time">${formatDateTime(game.startTime)}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
                 `;
             });
 
             Object.entries(combination.uncoveredGames).forEach(([key, games]) => {
-                uncoveredGamesDiv.innerHTML += `
-                    <div>
-                        <strong>${key}</strong>: ${games.length} games
+            const cleanKey = key.replace(/[<>]/g, '');
+            const groupedGames = groupGamesByMonth(games);
+
+            uncoveredGamesDiv.innerHTML += `
+                <div class="coverage-item">
+                    <div class="coverage-header" onclick="toggleGames(this)">
+                        <strong>${cleanKey}</strong>: ${games.length} games
+                        <span class="toggle-icon">+</span>
                     </div>
-                `;
-            });
-        }
+                    <div class="games-container">
+                        ${Object.entries(groupedGames).map(([month, monthGames]) => `
+                            <div class="month-group">
+                                <div class="month-header">${month}</div>
+                                <ul>
+                                    ${monthGames.map(game => `
+                                        <li>${game.homeTeam} vs ${game.awayTeam} 
+                                            <span class="game-time">${formatDateTime(game.startTime)}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+    }
         
         document.addEventListener('DOMContentLoaded', function() {
-            displayCombination(sampleCombination);
+            const bestCombination = JSON.parse(sessionStorage.getItem('bestCombination'));
+            if(bestCombination) {
+                displayCombination(bestCombination);
+                return;
+            }
+            else {
+                console.error('No combination Data found');
+                alert('No combination Data found');
+            }
         });
     </script>
 </body>

@@ -1,14 +1,18 @@
 package com.check24.streaming.model;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Lombok;
 
+@Data
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BestCombination {
     private CombinationType type;
     private double totalCost;
@@ -40,18 +44,15 @@ public class BestCombination {
         this.coveragePercentage = coveragePercentage;
     }
 
-    public BestCombination(double totalCost, Set<StreamingPackageDTO> packages, Map<String, Set<Game>> coveredGames, Map<String, Set<Game>> uncoveredGames, double coveragePercentage, String startMonthYear, String endMonthYear) {
-        PackagePeriod period = new PackagePeriod(startMonthYear, endMonthYear, packages, totalCost);
+    public BestCombination(double totalCost, Set<StreamingPackageDTO> packages, Map<String, Set<Game>> coveredGames, Map<String, Set<Game>> uncoveredGames, double coveragePercentage) {
         this.type = CombinationType.STATIC;
         this.totalCost = totalCost;
+        this.packages = new ArrayList<>();
+        PackagePeriod period = new PackagePeriod("", "", packages, totalCost);
         this.packages.add(period);
         this.coveredGames = coveredGames;
         this.uncoveredGames = uncoveredGames;
         this.coveragePercentage = coveragePercentage;
     }
-
-    /* What needs to be displayed?
-     * The number of packages in the combination, The detailed coverage of games across the packages, The total cost of the combination, The coverage percentage of the combination Map<Covered Games, Teams/Tournaments> Map<Uncovered Games, Teams/Tournaments>
-     */
 
 }

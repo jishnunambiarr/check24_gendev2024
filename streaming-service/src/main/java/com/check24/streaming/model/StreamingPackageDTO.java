@@ -4,13 +4,26 @@ import lombok.Data;
 @Data
 public class StreamingPackageDTO {
 
-    private final int streamingPackageId;
-    private final String name;
-    private final double monthlyPriceCents;
-    private final double yearlyPriceCents;
-    private final double liveCoveragePercentage;
-    private final double highlightsCoveragePercentage;
+    private int streamingPackageId;
+    private String name;
+    private double monthlyPriceCents;
+    private double yearlyPriceCents;
+    private double liveCoveragePercentage;
+    private double highlightsCoveragePercentage;
 
+    public StreamingPackageDTO(int streamingPackageId, String name, double monthlyPriceCents,
+    double yearlyPriceCents, double liveCoveragePercentage,
+    double highlightsCoveragePercentage) {
+    this.streamingPackageId = streamingPackageId;
+    this.name = name;
+    this.monthlyPriceCents = monthlyPriceCents;
+    this.yearlyPriceCents = yearlyPriceCents;
+    this.liveCoveragePercentage = liveCoveragePercentage;
+    this.highlightsCoveragePercentage = highlightsCoveragePercentage;
+    }
+    
+    public StreamingPackageDTO() {}
+    
     public static StreamingPackageDTO fromStreamingPackage(StreamingPackage pkg, 
             double liveCoveragePercentage, 
             double highlightsCoveragePercentage) {
