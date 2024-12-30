@@ -44,13 +44,15 @@ The combination logic employs two approaches:
 ## Project Structure
 The project expects the following structure:
 
-```
+```text
 project-root/
 ├── src/
 ├── static/
 ├── pom.xml
 ├── Dockerfile
 └── docker-compose.yaml
+```
+
 ### Prerequisites
 - Docker
 
@@ -60,6 +62,7 @@ project-root/
 3. Run:
    ```bash
    docker compose up --build
+   ```
 
 ## Demo
 Here is a link to the video demonstration: 
