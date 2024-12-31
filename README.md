@@ -65,4 +65,4 @@ project-root/
    ```
 
 ## Demo
-Here is a link to the video demonstration: 
+Here is a link to the video demonstration: https://youtu.be/ZkBgH8daqGk

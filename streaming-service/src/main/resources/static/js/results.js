@@ -1,3 +1,8 @@
+/**
+ * Global state for packages and selected packages
+ * packages: Stores all available packages from initial search
+ * selectedPackages: Tracks user-selected packages for comparison
+ */
 let packages = [];
 let selectedPackages = new Set();
 
@@ -17,52 +22,6 @@ $(document).ready(function() {
     searchPackages(selectedTeams, selectedTournaments);
     setupFilterListeners();
 });
-
-let filterState = {
-    sortingOption: null,
-    preference: null,
-    maxPrice: null
-};
-
-function updateFilterState(event) {
-    const field = event.target.id;
-    switch(field) {
-        case 'coverage':
-            filterState.preference = event.target.value || null;
-            break;
-        case 'sortBy':
-            filterState.sortingOption = event.target.value || null;
-            break;
-        case 'maxPrice':
-            filterState.maxPrice = event.target.value ? 
-                parseFloat(event.target.value) : null;
-            break;
-    }
-}
-
-function setupFilterListeners() {
-    document.getElementById('maxPrice')?.addEventListener('input', updateFilterState);
-    document.getElementById('coverage')?.addEventListener('change', updateFilterState);
-    document.getElementById('sortBy')?.addEventListener('change', updateFilterState);
-
-        // Add form submit handler
-        const filterForm = document.querySelector('.filter-section form');
-        filterForm?.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent form submission
-        });
-    
-        // Add button click handlers
-        document.querySelector('.apply-filters-btn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            applyFilters();
-        });
-    
-        document.querySelector('.clear-filters-btn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            clearFilters();
-        });
-
-}
 
 function searchPackages(teams, tournaments) {
     console.log('Searching packages for teams:', teams, 'tournaments:', tournaments);
@@ -98,6 +57,64 @@ function searchPackages(teams, tournaments) {
         const container = document.getElementById('packageResults');
         container.innerHTML = `<p style="color: red;">Error loading packages: ${error.message}</p>`;
     });
+}
+
+/**
+ * Filter state object to track current filter settings
+ */
+let filterState = {
+    sortingOption: null,
+    preference: null,
+    maxPrice: null
+};
+
+function updateFilterState(event) {
+    const field = event.target.id;
+    switch(field) {
+        case 'coverage':
+            filterState.preference = event.target.value || null;
+            break;
+        case 'sortBy':
+            filterState.sortingOption = event.target.value || null;
+            break;
+        case 'maxPrice':
+            filterState.maxPrice = event.target.value ? 
+                parseFloat(event.target.value) : null;
+            break;
+    }
+}
+
+
+/**
+ * Initializes event listeners for filter controls.
+ * Sets up handlers for:
+ * - Price input
+ * - Coverage preference
+ * - Sort options
+ * - Filter application/clearing
+ */
+function setupFilterListeners() {
+    document.getElementById('maxPrice')?.addEventListener('input', updateFilterState);
+    document.getElementById('coverage')?.addEventListener('change', updateFilterState);
+    document.getElementById('sortBy')?.addEventListener('change', updateFilterState);
+
+        // Add form submit handler
+        const filterForm = document.querySelector('.filter-section form');
+        filterForm?.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent form submission
+        });
+    
+        // Add button click handlers
+        document.querySelector('.apply-filters-btn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            applyFilters();
+        });
+    
+        document.querySelector('.clear-filters-btn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearFilters();
+        });
+
 }
 
 function applyFilters() {
@@ -176,6 +193,7 @@ function displayPackages(receivedPackages) {
         packageResults.appendChild(card);
     });
 }
+
 
 function findBestCombination() {
     const selectedTeams = JSON.parse(sessionStorage.getItem('selectedTeams') || '[]');

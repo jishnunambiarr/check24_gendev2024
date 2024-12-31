@@ -21,22 +21,23 @@ import com.check24.streaming.model.Game;
 import com.check24.streaming.model.StreamingOffer;
 import com.check24.streaming.model.StreamingPackage;
 
+/**
+ * Service class responsible for loading, managing, and querying streaming-related data from CSV files.
+ * Handles three main data types: games, streaming offers, and streaming packages.
+ * Provides methods for accessing and analyzing coverage statistics for teams and tournaments.
+ */
+
 @Service
 public class DataService 
 {
-    
     private List<CSVRecord> gameData;
     private List<CSVRecord> streamingOfferData;
     private List<CSVRecord> streamingPackageData;
-    @SuppressWarnings("FieldMayBeFinal")
-    private Map<Integer,Game> gamesById = new HashMap<>();  
-    @SuppressWarnings("FieldMayBeFinal")
-    private Map<String, Set<Game>> gamesByTeam = new HashMap<>();
-    @SuppressWarnings("FieldMayBeFinal")
-    private Map<Integer, StreamingPackage> packagesById = new HashMap<>();
-    @SuppressWarnings("FieldMayBeFinal")
-    private Map<String, Set<Game>> gamesByTournament = new HashMap<>();
-    private final Map<Integer, List<StreamingOffer>> offersByGameId = new HashMap<>();
+    private Map<Integer,Game> gamesById = new HashMap<>(); /** Maps game IDs to their corresponding Game objects */  
+    private Map<String, Set<Game>> gamesByTeam = new HashMap<>(); /** Maps team names to their set of associated games */
+    private Map<Integer, StreamingPackage> packagesById = new HashMap<>(); /** Maps packages to their corresponding IDs */
+    private Map<String, Set<Game>> gamesByTournament = new HashMap<>(); /** Maps tournament names to their set of associated games */
+    private Map<Integer, List<StreamingOffer>> offersByGameId = new HashMap<>(); /** Maps game IDs to their corresponding list of StreamingOffer objects */
 
 
     public DataService()
@@ -50,6 +51,7 @@ public class DataService
         loadStreamingOfferData();
         loadStreamingPackageData();
     }
+
 
     private List<CSVRecord> loadData(String fileName)
     {
@@ -71,9 +73,19 @@ public class DataService
             
     }
 
-
-    private List<CSVRecord> loadGameData() 
-    {
+    
+    /**
+     * Loads game data from bc_game.csv.
+     * Expected CSV format:
+     * - id: unique game identifier
+     * - team_home: home team name
+     * - team_away: away team name
+     * - starts_at: game start time
+     * - tournament_name: name of the tournament
+     * @return List of CSV records containing game data
+     */
+    
+    private List<CSVRecord> loadGameData() {
         gameData = loadData("bc_game.csv");
 
         for(CSVRecord record : gameData)
@@ -87,8 +99,16 @@ public class DataService
         return gameData;
     }
 
-    private List<CSVRecord> loadStreamingOfferData() 
-    {
+    /**
+     * Loads streaming offer data from bc_streaming_offer.csv.
+     * Expected CSV format:
+     * - game_id: reference to the game
+     * - streaming_package_id: reference to the package
+     * - live: boolean (1/0) indicating live streaming availability
+     * - highlights: boolean (1/0) indicating highlights availability
+     * @return List of CSV records containing streaming offer data
+     */
+    private List<CSVRecord> loadStreamingOfferData() {
        streamingOfferData = loadData("bc_streaming_offer.csv");
        for(CSVRecord record : streamingOfferData)
        {
@@ -98,8 +118,16 @@ public class DataService
        return streamingOfferData;
     }
 
-    private List<CSVRecord> loadStreamingPackageData() 
-    {
+    /**
+     * Loads streaming package data from bc_streaming_package.csv.
+     * Expected CSV format:
+     * - id: unique package identifier
+     * - name: package name
+     * - monthly_price_cents: monthly subscription price in cents
+     * - monthly_price_yearly_subscription_in_cents: yearly subscription monthly price in cents
+     * @return List of CSV records containing streaming package data
+     */
+    private List<CSVRecord> loadStreamingPackageData() {
         streamingPackageData = loadData("bc_streaming_package.csv");
         for (CSVRecord record : streamingPackageData) {
             StreamingPackage pkg = convertToStreamingPackage(record);
@@ -108,8 +136,12 @@ public class DataService
         return streamingPackageData;
     }
 
-    private Game convertToGame(CSVRecord record)
-    {
+    /**
+     * Converts a CSV record into a Game object.
+     * @param record The CSV record containing game data
+     * @return A new Game object populated with the record's data
+     */
+    private Game convertToGame(CSVRecord record) {
         return new Game(
             Integer.parseInt(record.get("id")),
             record.get("team_home"),
@@ -119,8 +151,7 @@ public class DataService
         );
     }
 
-    private StreamingOffer convertToStreamingOffer(CSVRecord record)
-    {
+    private StreamingOffer convertToStreamingOffer(CSVRecord record) {
         return new StreamingOffer(
             Integer.parseInt(record.get("game_id")),
             Integer.parseInt(record.get("streaming_package_id")),
@@ -130,8 +161,7 @@ public class DataService
         );
     }
 
-    private StreamingPackage convertToStreamingPackage(CSVRecord record)
-    {
+    private StreamingPackage convertToStreamingPackage(CSVRecord record) {
         return new StreamingPackage(
             Integer.parseInt(record.get("id")),
             record.get("name"),
@@ -162,63 +192,56 @@ public class DataService
             .collect(Collectors.toList());
     }
 
-    public Set<Game> getGamesByTeam(String team)
-    {
+    public Set<Game> getGamesByTeam(String team) {
         return gamesByTeam.getOrDefault(team, new HashSet<>());
     }
 
-    public Set<Game> getGamesByTeams(List<String> teams)
-    {
+    public Set<Game> getGamesByTeams(List<String> teams) {
         Set<Game> games = new HashSet<>();
-        for(String team : teams)
-        {
+        for(String team : teams) {
             games.addAll(getGamesByTeam(team));
         }
 
         return games;
     }
 
-    public Set<Game> getGamesByTournament(String tournament)
-    {
+    public Set<Game> getGamesByTournament(String tournament) {
         return gamesByTournament.getOrDefault(tournament, new HashSet<>());
     }
 
-    public List<StreamingOffer> getOffersForGame(int gameId)
-    {
+    public List<StreamingOffer> getOffersForGame(int gameId) {
        return offersByGameId.getOrDefault(gameId, new ArrayList<>());
     }
 
-    public StreamingPackage getPackageById(int packageId)
-    {
+    public StreamingPackage getPackageById(int packageId) {
         return packagesById.get(packageId);
     }
 
-    public Collection<StreamingPackage> getAllPackages()
-    {
+    public Collection<StreamingPackage> getAllPackages() {
         return packagesById.values();
     }
 
-    public String getGameMonth(int gameId)
-    {
+    public String getGameMonth(int gameId) {
         return gamesById.get(gameId).getStartTime().split(" ")[0].split("-")[1];
     }
 
-    public String getGameYear(int gameId)
-    {
+    public String getGameYear(int gameId) {
         return gamesById.get(gameId).getStartTime().split(" ")[0].split("-")[0];
     }
 
-    public double getTeamLiveCoverageByPackageId(String teamName, int packageId)
-    {
+    /**
+     * Calculates the percentage of live game coverage for a specific team and streaming package.
+     * @param teamName The name of the team to check coverage for
+     * @param packageId The ID of the streaming package
+     * @return A value between 0.0 and 1.0 representing the percentage of team's games available for live streaming
+     */
+    public double getTeamLiveCoverageByPackageId(String teamName, int packageId) {
         Set<Game> games = getGamesByTeam(teamName);
         if(games.isEmpty()) return 0.0;
         int liveGamesCovered = 0;
-        for(Game game : games)
-        {
-            for(StreamingOffer offer : getOffersForGame(game.getId()))
-            {
-                if(offer.getStreamingPackageId() == packageId && offer.isHasLive())
-                {
+        for(Game game : games) {
+            for(StreamingOffer offer : getOffersForGame(game.getId())) {
+                if(offer.getStreamingPackageId() == packageId && offer.isHasLive()) {
                     liveGamesCovered++;
                     break;
                 } 
@@ -227,17 +250,19 @@ public class DataService
         return (double) liveGamesCovered / games.size();
     }
 
-    public double getTeamHighlightsCoverageByPackageId(String teamName, int packageId)
-    {
+    /**
+     * Calculates the percentage of highlights coverage for a specific team and streaming package.
+     * @param teamName The name of the team to check coverage for
+     * @param packageId The ID of the streaming package
+     * @return A value between 0.0 and 1.0 representing the percentage of team's games available with highlights
+     */
+    public double getTeamHighlightsCoverageByPackageId(String teamName, int packageId) {
         Set<Game> games = getGamesByTeam(teamName);
         if(games.isEmpty()) return 0.0;
         int highlightGamesCovered = 0;
-        for(Game game : games)
-        {
-            for(StreamingOffer offer : getOffersForGame(game.getId()))
-            {
-                if(offer.getStreamingPackageId() == packageId && offer.isHasHighlights())
-                {
+        for(Game game : games) {
+            for(StreamingOffer offer : getOffersForGame(game.getId())) {
+                if(offer.getStreamingPackageId() == packageId && offer.isHasHighlights()) {
                     highlightGamesCovered++;
                     break;
                 } 
@@ -247,6 +272,7 @@ public class DataService
 
     }
 
+    // Similar to the above methods, but for tournaments instead of teams
     public double getTournamentLiveCoverageByPackageId(String tournamentName, int packageId) {
         Set<Game> games = getGamesByTournament(tournamentName);
         if (games.isEmpty()) return 0.0;
@@ -278,8 +304,4 @@ public class DataService
         }
         return (double) highlightGamesCovered / games.size();
     }
-
-
-
 }
-

@@ -30,17 +30,20 @@ public class WebController {
         this.packageFilterService = packageFilterService;
         this.packageCombinationService = packageCombinationService;
     }
-
+    
+    // Get all teams
     @GetMapping("/teams")
     public ResponseEntity<List<String>> getAllTeams() {
         return ResponseEntity.ok(dataService.getAllTeams());
     }
 
+    // Get all tournaments
     @GetMapping("/tournaments")
     public ResponseEntity<List<String>> getAllTournaments() {
         return ResponseEntity.ok(dataService.getAllTournaments());
     }
 
+    // Filter packages
     public record FilterRequest(
     Collection<StreamingPackageDTO> packages,
     FilterOptions filterOptions
@@ -52,7 +55,7 @@ public class WebController {
     }
 
 
-    
+    // Search packages
     @PostMapping("/search")
     public ResponseEntity<Collection<StreamingPackageDTO>> searchPackages(@RequestBody SearchRequest request) {
         return ResponseEntity.ok(
@@ -63,7 +66,8 @@ public class WebController {
         );
     }
 
-    
+
+    // Compare packages
     public record CompareRequest(
         List<String> teams,
         List<String> tournaments,
@@ -83,6 +87,7 @@ public class WebController {
     }
 
 
+    //Error handling
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity

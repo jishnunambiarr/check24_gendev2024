@@ -3,6 +3,7 @@ import lombok.Data;
 
 @Data
 public class StreamingPackageDTO {
+    /* Model to represent Search Results */
 
     private int streamingPackageId;
     private String name;
@@ -24,13 +25,10 @@ public class StreamingPackageDTO {
     
     public StreamingPackageDTO() {}
     
+    // Convert StreamingPackage to StreamingPackageDTO
     public static StreamingPackageDTO fromStreamingPackage(StreamingPackage pkg, 
             double liveCoveragePercentage, 
-            double highlightsCoveragePercentage) {
-                System.out.println("Creating DTO for package: " + pkg.getName());
-                System.out.println("Live Coverage: " + liveCoveragePercentage);
-                System.out.println("Highlights Coverage: " + highlightsCoveragePercentage);
-                System.out.println("Monthly Price: " + pkg.getMonthlyPriceCents());        
+            double highlightsCoveragePercentage) {      
         return new StreamingPackageDTO(
             pkg.getStreamingPackageId(),
             pkg.getName(),

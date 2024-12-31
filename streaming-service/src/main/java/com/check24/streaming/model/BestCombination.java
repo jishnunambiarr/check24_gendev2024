@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+/* Model to represent the Best Combination */
 public class BestCombination {
     private CombinationType type;
     private double totalCost;

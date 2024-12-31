@@ -12,6 +12,12 @@ import com.check24.streaming.model.FilterOptions;
 import com.check24.streaming.model.StreamingPackage;
 import com.check24.streaming.model.StreamingPackageDTO;
 
+
+/**
+ * Service responsible for filtering and searching streaming packages based on teams, tournaments, and user preferences.
+ * Provides functionality to calculate coverage percentages and filter packages based on various criteria.
+ */
+
 @Service
 public class PackageFilterService 
 {
@@ -23,7 +29,14 @@ public class PackageFilterService
         this.dataService = dataService;
     }
 
-
+    /**
+     * Searches for relevant streaming packages based on selected teams and tournaments.
+     * A package is considered relevant if it has any coverage (live or highlights) for any of the selected teams or tournaments.
+     *
+     * @param teams List of team names to search for
+     * @param tournaments List of tournament names to search for
+     * @return Collection of StreamingPackageDTO with calculated coverage percentages
+     */
     public Collection<StreamingPackageDTO> searchByTeamsAndTournaments(List<String> teams, List<String> tournaments) {
         Collection<StreamingPackage> allPackages = dataService.getAllPackages();
         System.out.println("Total packages before filtering: " + allPackages.size());
@@ -67,7 +80,20 @@ public class PackageFilterService
         }
         return result;
     }
-    
+
+    /**
+     * Filters and sorts streaming packages based on specified options.
+     * Filtering criteria include:
+     * - Maximum price threshold
+     * - Coverage preference (live/highlights)
+     * Sorting options include:
+     * - Price (ascending)
+     * - Coverage percentage (descending)
+     *
+     * @param packages Collection of packages to filter
+     * @param options FilterOptions containing price limits, coverage preferences, and sorting criteria
+     * @return Filtered and sorted collection of StreamingPackageDTO
+     */
     public Collection<StreamingPackageDTO> filter(Collection<StreamingPackageDTO> packages, FilterOptions options) {
         return packages.stream()
             .filter(pkg -> {
@@ -119,7 +145,17 @@ public class PackageFilterService
             .collect(Collectors.toList());
 
     }
-    
+
+    /**
+     * Calculates the average coverage percentage across all selected teams and tournaments for a package.
+     * Coverage can be calculated for either live streaming or highlights based on the provided options.
+     *
+     * @param packageId ID of the package to calculate coverage for
+     * @param teams List of teams to include in calculation
+     * @param tournaments List of tournaments to include in calculation
+     * @param options FilterOptions containing coverage preference
+     * @return Average coverage percentage between 0.0 and 1.0
+     */
     private double calculateTotalCoverage(int packageId, List<String> teams, List<String> tournaments, FilterOptions options) {
         double totalCoverage = 0.0;
 
