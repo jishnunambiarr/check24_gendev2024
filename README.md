@@ -63,6 +63,7 @@ project-root/
    ```bash
    docker compose up --build
    ```
+4. Navigate to **http://localhost:8080/**
 
 ## Demo
 Here is a link to the video demonstration: https://youtu.be/ZkBgH8daqGk
